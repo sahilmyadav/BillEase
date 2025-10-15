@@ -10,7 +10,7 @@
 
 > A complete enterprise solution for managing invoices, products, orders, and payments. Built from scratch with modern technologies and industry best practices.
 
-**💻 Created & Developed by:** [Sahil](https://github.com/sahil)  
+**💻 Created & Developed by:** [Sahilyadav](https://github.com/sahilmyadav)  
 **📅 Project Started:** 2025  
 **🎯 Purpose:** Professional billing and invoice management for businesses
 
