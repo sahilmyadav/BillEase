@@ -451,8 +451,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Sahil**
-- Email: sahil@example.com
-- GitHub: [@sahil](https://github.com/sahil)
+- Email: sahilyadav@duck.com
+- GitHub: [@sahilmyadav](https://github.com/sahilmyadav)
 
 ---
 
