@@ -1,475 +1,134 @@
-# 💼 InvoiceMaster
+# BillEase Backend
 
-### Professional Invoice & Billing Management System
+Robust billing and POS REST API powering the BillEase frontend. Secure auth, catalog, orders, payments, and dashboard analytics built with Spring Boot and MySQL.
 
-[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.4-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![MySQL](https://img.shields.io/badge/MySQL-8.0-blue.svg)](https://www.mysql.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-1.0.0-blue.svg)](https://github.com/sahil/invoicemaster)
+Badges: Java 21 • Spring Boot 3.4.x • MySQL 8 • JWT • Razorpay
 
-> A complete enterprise solution for managing invoices, products, orders, and payments. Built from scratch with modern technologies and industry best practices.
+## Purpose
+- Provide a secure, scalable API for point‑of‑sale billing
+- Manage users, categories, items, orders, and payments
+- Power the React frontend with clean, versioned endpoints under /api/v1.0
 
-**💻 Created & Developed by:** [Sahilyadav](https://github.com/sahilmyadav)  
-**📅 Project Started:** 2025  
-**🎯 Purpose:** Professional billing and invoice management for businesses
+## How it works (high‑level)
+1) Auth: client calls POST /login → JWT issued, used in Authorization: Bearer <token>.
+2) Catalog: admin manages categories/items; public fetches are authorized.
+3) Cart → Order: client POST /orders with items + customer; backend computes totals, saves order.
+4) Payments: client POST /payments/create-order → Razorpay; after success, POST /payments/verify to confirm and update order status.
+5) Dashboard: aggregates sales, orders, recent activity.
 
----
-
-## 📋 Table of Contents
-
-- [Features](#features)
-- [Technology Stack](#technology-stack)
-- [Architecture](#architecture)
-- [Getting Started](#getting-started)
-- [API Documentation](#api-documentation)
-- [Configuration](#configuration)
-- [Database](#database)
-- [Security](#security)
-- [Testing](#testing)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
-
----
-
-## ✨ Features
-
-### 🎯 What is InvoiceMaster?
-
-InvoiceMaster is a powerful, enterprise-grade billing management system I built to handle all aspects of invoicing and order management. It's designed for businesses that need a reliable, scalable solution for managing their billing operations.
-
-### ✨ Core Features
-
-#### 🔐 Security & Authentication
-- JWT-based authentication with secure token management
-- Role-based access control (Admin & User roles)
-- Password encryption with BCrypt
-- Protected API endpoints
-
-#### 📦 Product Management
-- Complete product catalog with categories
-- Product CRUD operations with image support
-- Category-based organization
-- Real-time inventory tracking
-
-#### 🛒 Order & Invoice System
-- Full order lifecycle management
-- Automatic invoice generation
-- Order tracking with unique IDs
-- Customer information management
-
-#### 💳 Payment Processing
-- Razorpay payment gateway integration
-- Multiple payment methods support
-- Payment status tracking
-- Secure transaction handling
-
-#### 📊 Analytics & Reporting
-- Real-time dashboard with business metrics
-- Sales analytics and trends
-- Revenue tracking
-- Export reports to PDF, Excel, CSV
-
-#### ☁️ Cloud Integration
-- AWS S3 for file storage
-- Image upload and management
-- Scalable storage solution
-
-#### 📧 Communication
-- Automated email notifications
-- Invoice delivery via email
-- Order confirmation emails
-- SMTP integration
-
-### Technical Features
-- 🔄 **RESTful API** - Well-structured REST API with proper HTTP methods
-- 📚 **API Documentation** - Interactive Swagger/OpenAPI documentation
-- 🚀 **Caching** - Caffeine cache for improved performance
-- 🔒 **Security** - Rate limiting, CORS configuration, SQL injection prevention
-- 📝 **Audit Logging** - Comprehensive audit trail with user tracking
-- 🗄️ **Database Migration** - Flyway for version-controlled schema management
-- ⚡ **Performance** - Connection pooling, query optimization, pagination support
-- 🎯 **Exception Handling** - Global exception handling with consistent error responses
-- ✅ **Validation** - Bean validation with Jakarta Validation API
-- 🔍 **Monitoring** - Spring Boot Actuator endpoints for health and metrics
-
----
-
-## 🛠️ Technology Stack
-
-### Backend
-- **Java 21** - Latest LTS version with modern language features
-- **Spring Boot 3.4.4** - Comprehensive framework for building production-ready applications
-- **Spring Security** - Authentication and authorization
-- **Spring Data JPA** - Data access layer with Hibernate
-- **MySQL 8.0** - Relational database
-- **Flyway** - Database migration tool
-
-### Libraries & Tools
-- **Lombok** - Reduce boilerplate code
-- **MapStruct** - Type-safe bean mapping
-- **Caffeine** - High-performance caching
-- **Bucket4j** - Rate limiting
-- **JJWT** - JWT token generation and validation
-- **Apache POI** - Excel file generation
-- **iText7** - PDF generation
-- **SpringDoc OpenAPI** - API documentation
-
-### Cloud & External Services
-- **AWS S3** - File storage
-- **Razorpay** - Payment processing
-- **Gmail SMTP** - Email delivery
-
----
-
-## 🏭️ Project Architecture
-
-InvoiceMaster follows a clean, layered architecture:
-
-```
-invoicemaster/
-├── src/main/java/com/sahil/invoicemaster/
-│   ├── config/              # Configuration classes
-│   │   ├── CacheConfig.java
-│   │   ├── DataInitializer.java
-│   │   ├── JpaAuditingConfig.java
-│   │   ├── OpenApiConfig.java
-│   │   └── SecurityConfig.java
-│   ├── controller/          # REST controllers
-│   │   ├── AuthController.java
-│   │   ├── CategoryController.java
-│   │   ├── DashboardController.java
-│   │   ├── ItemController.java
-│   │   ├── OrderController.java
-│   │   ├── PaymentController.java
-│   │   └── UserController.java
-│   ├── entity/              # JPA entities
-│   │   ├── BaseEntity.java
-│   │   ├── CategoryEntity.java
-│   │   ├── ItemEntity.java
-│   │   ├── OrderEntity.java
-│   │   ├── OrderItemEntity.java
-│   │   └── UserEntity.java
-│   ├── repository/          # Data repositories
-│   ├── service/             # Business logic
-│   │   └── impl/            # Service implementations
-│   ├── dto/                 # Data Transfer Objects
-│   ├── exception/           # Custom exceptions
-│   ├── filter/              # Security filters
-│   ├── util/                # Utility classes
-│   └── InvoiceMasterApplication.java
-├── src/main/resources/
-│   ├── application.properties
-│   ├── application-dev.properties
-│   ├── application-prod.properties
-│   └── db/migration/        # Flyway migration scripts
-└── pom.xml
+Sequence (login)
+```mermaid
+sequenceDiagram
+    participant UI as Frontend
+    participant API as BillEase API
+    participant DB as MySQL
+    UI->>API: POST /login {email,password}
+    API->>DB: Validate user + password
+    DB-->>API: User + roles
+    API-->>UI: { token, role }
+    UI->>API: Authorized requests with Bearer token
 ```
 
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- **Java 21** or higher
-- **Maven 3.8+**
-- **MySQL 8.0+**
-- **Git**
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/sahil/invoicemaster.git
-   cd invoicemaster
-   ```
-
-2. **Configure MySQL Database**
-   ```sql
-   CREATE DATABASE invoicemaster_db;
-   CREATE USER 'sahil'@'localhost' IDENTIFIED BY 'your_password';
-   GRANT ALL PRIVILEGES ON invoicemaster_db.* TO 'sahil'@'localhost';
-   FLUSH PRIVILEGES;
-   ```
-
-3. **Update application.properties**
-   ```properties
-   spring.datasource.url=jdbc:mysql://localhost:3306/invoicemaster_db
-   spring.datasource.username=sahil
-   spring.datasource.password=your_password
-   ```
-
-4. **Build the project**
-   ```bash
-   ./mvnw clean package
-   ```
-
-5. **Run the application**
-   ```bash
-   ./mvnw spring-boot:run
-   ```
-
-6. **Access the application**
-   - API Base URL: `http://localhost:8080/api/v1.0`
-   - Swagger UI: `http://localhost:8080/api/v1.0/swagger-ui.html`
-   - Health Check: `http://localhost:8080/api/v1.0/actuator/health`
-
-### Default Admin Account
-
-```
-Email: admin@admin.com
-Password: 12345
+Sequence (checkout)
+```mermaid
+sequenceDiagram
+    participant UI as Frontend
+    participant API as BillEase API
+    participant RZP as Razorpay
+    UI->>API: POST /payments/create-order {amount}
+    API->>RZP: Create order
+    RZP-->>API: orderId
+    API-->>UI: {orderId,key}
+    UI->>RZP: Open payment UI
+    RZP-->>UI: success {paymentId,signature}
+    UI->>API: POST /payments/verify {orderId,paymentId,signature}
+    API->>API: Verify signature + persist order
+    API-->>UI: Receipt/Order summary
 ```
 
-**⚠️ Important:** Change the default admin password in production!
+## Tech stack
+- Java 21, Spring Boot 3.4.x, Spring Security (JWT), Spring Data JPA
+- MySQL 8.x, Flyway (optional), Caffeine cache (optional)
+- Razorpay SDK, Mail (optional), AWS S3 (optional, local uploads by default)
 
----
-
-## 📚 API Documentation
-
-### Interactive Documentation
-
-Access the interactive Swagger UI at:
+## Project layout
 ```
-http://localhost:8080/api/v1.0/swagger-ui.html
-```
-
-### Key Endpoints
-
-#### Authentication
-- `POST /login` - User login
-- `POST /encode` - Encode password (utility)
-
-#### User Management (Admin Only)
-- `POST /admin/register` - Create new user
-- `GET /admin/users` - List all users
-- `DELETE /admin/users/{id}` - Delete user
-
-#### Categories
-- `GET /categories` - List all categories
-- `POST /categories` - Create category
-- `PUT /categories/{id}` - Update category
-- `DELETE /categories/{id}` - Delete category
-
-#### Items
-- `GET /items` - List all items
-- `POST /items` - Create item
-- `PUT /items/{id}` - Update item
-- `DELETE /items/{id}` - Delete item
-
-#### Orders
-- `GET /orders` - List all orders
-- `POST /orders` - Create order
-- `GET /orders/{id}` - Get order details
-- `DELETE /orders/{id}` - Delete order
-
-#### Dashboard
-- `GET /dashboard` - Get dashboard analytics
-
-### Authentication
-
-All protected endpoints require JWT authentication. Include the token in the Authorization header:
-
-```
-Authorization: Bearer <your_jwt_token>
+src/main/java/.../
+├─ config (SecurityConfig, OpenApiConfig, CacheConfig, DataInitializer)
+├─ controller (Auth, User, Category, Item, Order, Payment, Dashboard)
+├─ service (+ impl)
+├─ dto (request/response)
+├─ entity (User, Category, Item, Order, OrderItem, BaseEntity)
+├─ repository
+└─ exception, filter, util
 ```
 
----
+## Run locally
+Prereqs: Java 21, Maven, MySQL
 
-## ⚙️ Configuration
-
-### Profiles
-
-The application supports multiple profiles:
-
-- **dev** - Development environment (detailed logging, auto-reload)
-- **prod** - Production environment (optimized settings, security hardened)
-
-Switch profiles:
+1) Create DB
+```sql
+CREATE DATABASE billease_db;
+```
+2) Configure src/main/resources/application.properties
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/billease_db
+spring.datasource.username=YOUR_USER
+spring.datasource.password=YOUR_PASS
+# jwt.secret.key, cors, mail, razorpay keys, etc.
+```
+3) Start API
 ```bash
-./mvnw spring-boot:run -Dspring-boot.run.profiles=prod
+./mvnw spring-boot:run
+```
+Base URL: http://localhost:8080/api/v1.0  • Swagger: /swagger-ui.html
+
+Default admin (change in prod):
+- Email: admin@admin.com
+- Password: 12345
+
+## Key endpoints
+- Auth: POST /login, POST /encode
+- Users (ADMIN): POST /admin/register, GET /admin/users, DELETE /admin/users/{id}
+- Categories: GET/POST/PUT/DELETE /categories
+- Items: GET/POST/PUT/DELETE /items
+- Orders: GET /orders, POST /orders, GET /orders/{id}, DELETE /orders/{id}
+- Dashboard: GET /dashboard
+- Payments: POST /payments/create-order, POST /payments/verify
+
+Auth header for protected routes:
+```
+Authorization: Bearer <token>
 ```
 
-### Environment Variables
+## Configuration (env)
+```
+DB_HOST, DB_PORT, DB_NAME, DB_USERNAME, DB_PASSWORD
+JWT_SECRET_KEY, JWT_EXPIRATION_MS
+RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET
+MAIL_USERNAME, MAIL_PASSWORD
+AWS_ACCESS_KEY, AWS_SECRET_KEY, AWS_REGION, AWS_BUCKET_NAME (optional)
+```
+CORS: allow your frontend origin (default dev http://localhost:5173)
+Uploads: stored in local ./uploads by default (S3 optional)
 
-Key environment variables:
+## Demo (add your GIFs/screens)
+- docs/gifs/auth.gif – Login + authorized calls
+- docs/gifs/catalog.gif – Admin managing items/categories
+- docs/gifs/checkout.gif – Create order + Razorpay + verify
+- docs/gifs/dashboard.gif – Metrics and recent orders
 
+## Testing & build
 ```bash
-# Database
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=invoicemaster_db
-DB_USERNAME=sahil
-DB_PASSWORD=your_secure_password
-
-# AWS S3
-AWS_ACCESS_KEY=your_access_key
-AWS_SECRET_KEY=your_secret_key
-AWS_REGION=ap-south-1
-AWS_BUCKET_NAME=your_bucket_name
-
-# JWT
-JWT_SECRET_KEY=your_secret_key_here
-JWT_EXPIRATION_MS=36000000
-
-# Razorpay
-RAZORPAY_KEY_ID=your_key_id
-RAZORPAY_KEY_SECRET=your_secret_key
-
-# Email
-MAIL_USERNAME=your-email@gmail.com
-MAIL_PASSWORD=your-app-password
-```
-
----
-
-## 🗄️ Database
-
-### Schema Management
-
-The application uses **Flyway** for database migrations. Migration scripts are located in:
-```
-src/main/resources/db/migration/
-```
-
-### Migration Commands
-
-```bash
-# Run migrations
-./mvnw flyway:migrate
-
-# Get migration info
-./mvnw flyway:info
-
-# Clean database (⚠️ USE WITH CAUTION)
-./mvnw flyway:clean
-```
-
----
-
-## 🔒 Security
-
-### Features
-
-- JWT-based stateless authentication
-- Password encryption with BCrypt
-- Role-based access control (RBAC)
-- CORS configuration
-- SQL injection prevention
-- Rate limiting
-- Input validation
-- Audit logging
-
-### Security Best Practices
-
-1. **Change default credentials** in production
-2. **Use strong JWT secret keys** (256-bit minimum)
-3. **Enable HTTPS** in production
-4. **Configure proper CORS** origins
-5. **Regular security audits** and dependency updates
-6. **Implement rate limiting** on sensitive endpoints
-7. **Use environment variables** for secrets
-
----
-
-## 🧪 Testing
-
-### Run Tests
-
-```bash
-# Run all tests
 ./mvnw test
-
-# Run with coverage
-./mvnw test jacoco:report
-
-# Run integration tests
-./mvnw verify
-```
-
----
-
-## 🚢 Deployment
-
-### JAR Deployment
-
-```bash
-# Build JAR
 ./mvnw clean package -DskipTests
-
-# Run JAR
-java -jar target/invoicemaster-1.0.0.jar
+java -jar target/billease-*.jar
 ```
 
-### Docker Deployment
+## Security notes
+- Use strong JWT secret, rotate regularly
+- Change default admin credentials
+- Restrict CORS and enable HTTPS in production
+- Validate all inputs; rate-limit sensitive endpoints
 
-```dockerfile
-FROM eclipse-temurin:21-jdk-alpine
-WORKDIR /app
-COPY target/invoicemaster-1.0.0.jar app.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
-```
-
-```bash
-# Build and run
-docker build -t invoicemaster .
-docker run -p 8080:8080 invoicemaster
-```
-
-### Cloud Deployment
-
-Compatible with:
-- AWS Elastic Beanstalk
-- Google Cloud Platform
-- Microsoft Azure
-- Heroku
-- Digital Ocean
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 👨‍💻 Author
-
-**Sahil**
-- Email: sahilyadav@duck.com
-- GitHub: [@sahilmyadav](https://github.com/sahilmyadav)
-
----
-
-## 🙏 Acknowledgments
-
-- Spring Boot Team for the amazing framework
-- All open-source contributors
-- The Java community
-
----
-
-## 📞 Support
-
-For support, email sahilyadav@duck.com or open an issue in the repository.
-
----
-
-<div align="center">
-  <sub>Built with ❤️ by Sahil</sub>
-</div>
+Maintainer: Sahil • GitHub: @sahilmyadav • Email: sahilyadav@duck.com
