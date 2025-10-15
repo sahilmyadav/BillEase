@@ -466,7 +466,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-For support, email sahil@example.com or open an issue in the repository.
+For support, email sahilyadav@duck.com or open an issue in the repository.
 
 ---
 
